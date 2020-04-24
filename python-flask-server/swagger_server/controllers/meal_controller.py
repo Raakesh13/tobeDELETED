@@ -3,6 +3,8 @@ import six
 
 from swagger_server.models.meal import Meal  # noqa: E501
 from swagger_server import util
+import swagger_server.controllers.user_controller as UC
+from swagger_server.controllers.util import unique_id, generate_csv
 
 
 def add_meal(username, body):  # noqa: E501
@@ -19,7 +21,10 @@ def add_meal(username, body):  # noqa: E501
     """
     if connexion.request.is_json:
         body = Meal.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+    uid = unique_id()
+    UC.user_meal_map[username][1][uid] = body
+    print(UC.user_meal_map)
+    return uid
 
 
 def delete_meal(mealId, username):  # noqa: E501
@@ -34,7 +39,10 @@ def delete_meal(mealId, username):  # noqa: E501
 
     :rtype: None
     """
-    return 'do some magic!'
+
+    del(UC.user_meal_map[username][1][mealId])
+    print(UC.user_meal_map)
+    return "meal deleted"
 
 
 def get_mealby_meal_id(mealId, username):  # noqa: E501
@@ -49,7 +57,9 @@ def get_mealby_meal_id(mealId, username):  # noqa: E501
 
     :rtype: Meal
     """
-    return 'do some magic!'
+    if mealId not in UC.user_meal_map[username][1]:
+        return "mealId does not exist", 404
+    return UC.user_meal_map[username][1][mealId].to_dict()
 
 
 def update_meal(mealId, username, body):  # noqa: E501
@@ -68,4 +78,9 @@ def update_meal(mealId, username, body):  # noqa: E501
     """
     if connexion.request.is_json:
         body = Meal.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+
+    del(UC.user_meal_map[username][1][mealId])
+    UC.user_meal_map[username][1][mealId] = body
+    print(UC.user_meal_map)
+
+    return 'meal updated'
