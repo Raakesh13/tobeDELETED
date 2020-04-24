@@ -1,0 +1,255 @@
+---
+swagger: "2.0"
+info:
+  description: "This is the swagger for Healthifyme api."
+  version: "1.0.0"
+  title: "Healthify ME"
+  contact:
+    email: "raakesh.das13@gmail.com"
+host: "localhost:8080"
+basePath: "/v1"
+schemes:
+- "https"
+- "http"
+paths:
+  /user:
+    post:
+      tags:
+      - "user"
+      summary: "Create user"
+      operationId: "user_post"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Created user object"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        "200":
+          description: "User created"
+        default:
+          description: "Successful"
+      x-swagger-router-controller: "swagger_server.controllers.user_controller"
+  /user/{username}:
+    get:
+      tags:
+      - "user"
+      summary: "Get user details"
+      operationId: "get_user_details"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "successful"
+          schema:
+            $ref: "#/definitions/User"
+      x-swagger-router-controller: "swagger_server.controllers.user_controller"
+    put:
+      tags:
+      - "user"
+      summary: "Update user details"
+      operationId: "update_user"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Updated user"
+        required: true
+        schema:
+          $ref: "#/definitions/UserPut"
+      responses:
+        "200":
+          description: "successful"
+        "404":
+          description: "User not found"
+      x-swagger-router-controller: "swagger_server.controllers.user_controller"
+    delete:
+      tags:
+      - "user"
+      summary: "Delete user"
+      description: "Delete user"
+      operationId: "delete_user"
+      parameters:
+      - name: "username"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "OK"
+        "404":
+          description: "user not found"
+      x-swagger-router-controller: "swagger_server.controllers.user_controller"
+  /{username}/meals:
+    post:
+      tags:
+      - "meal"
+      summary: "Add meal"
+      operationId: "add_meal"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Meal object to add"
+        required: true
+        schema:
+          $ref: "#/definitions/Meal"
+      responses:
+        "200":
+          description: "Successful"
+      x-swagger-router-controller: "swagger_server.controllers.meal_controller"
+  /{username}/meals/{mealId}:
+    get:
+      tags:
+      - "meal"
+      summary: "get meal details"
+      description: "get meal by mealId"
+      operationId: "get_mealby_meal_id"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "mealId"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "username"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Successful"
+          schema:
+            $ref: "#/definitions/Meal"
+        "404":
+          description: "Meal not found"
+      x-swagger-router-controller: "swagger_server.controllers.meal_controller"
+    put:
+      tags:
+      - "meal"
+      summary: "Update Meal entry"
+      description: "This can only be done by the logged in user."
+      operationId: "update_meal"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "mealId"
+        in: "path"
+        description: "meal that needs to be updated"
+        required: true
+        type: "string"
+      - name: "username"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "Updated meal object"
+        required: true
+        schema:
+          $ref: "#/definitions/Meal"
+      responses:
+        "400":
+          description: "Invalid meal supplied"
+        "404":
+          description: "Meal not found"
+      x-swagger-router-controller: "swagger_server.controllers.meal_controller"
+    delete:
+      tags:
+      - "meal"
+      summary: "Delete meal entry"
+      description: "This can only be done by the logged in user."
+      operationId: "delete_meal"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "mealId"
+        in: "path"
+        description: "The meal that needs to be deleted."
+        required: true
+        type: "string"
+      - name: "username"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "400":
+          description: "Invalid meal id supplied"
+        "404":
+          description: "Meal not found"
+      x-swagger-router-controller: "swagger_server.controllers.meal_controller"
+definitions:
+  User:
+    type: "object"
+    properties:
+      username:
+        type: "string"
+      email:
+        type: "string"
+      password:
+        type: "string"
+    xml:
+      name: "User"
+    example:
+      password: "password"
+      email: "email"
+      username: "username"
+  UserPut:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+      password:
+        type: "string"
+    xml:
+      name: "User"
+  Meal:
+    type: "object"
+    properties:
+      mealname:
+        type: "string"
+      description:
+        type: "string"
+      calorie:
+        type: "integer"
+        format: "int64"
+      date:
+        type: "string"
+      time:
+        type: "string"
+      day_limit:
+        type: "boolean"
+    xml:
+      name: "Meal"
+    example:
+      date: "date"
+      day_limit: true
+      calorie: 0
+      description: "description"
+      time: "time"
+      mealname: "mealname"
